@@ -1,5 +1,7 @@
 const userURL = "https://randomuser.me/api/";
 const gallery =document.querySelector("#gallery");
+const body = document.querySelector("body"); 
+
 
 async function getJSON(url){
     try{
@@ -27,6 +29,8 @@ function generateHTML(data) {
       const div= document.createElement('div');
       div.className="card";
       gallery.appendChild(div);
+ 
+
       div.innerHTML = `
         <div class="card-img-container">
             <img class="card-img" src=${person.picture.large} alt="profile picture">
@@ -37,7 +41,33 @@ function generateHTML(data) {
             <p class="card-text cap">${person.location.city}, ${person.location.state}</p>
         </div>        
       `;
-      div.createComment
+      div.addEventListener('click', (event) =>{
+
+        const modalContainer=document.createElement('div');
+        body.appendChild(modalContainer);
+        modalContainer.className="modal-container";
+        modalContainer.innerHTML=`
+                <div class="modal">
+                    <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+                    <div class="modal-info-container">
+                        <img class="modal-img" src=${person.picture.large} alt="profile picture">
+                        <h3 id="${person.name.first}${person.name.last}" class="modal-name cap">${person.name.first} ${person.name.last}</h3>
+                        <p class="modal-text">${person.email}</p>
+                        <p class="modal-text cap">${person.location.city}</p>
+                        <hr>
+                        <p class="modal-text">${person.cell}</p>
+                        <p class="modal-text">${person.location.street.number} ${person.location.street.name}, ${person.location.state}, ${person.location.country} ${person.location.postcode}</p>
+                        <p class="modal-text">Birthday: ${person.dob.date}</p>
+                    </div>
+                </div>
+                `;
+        const closeButton =document.querySelector("#modal-close-btn");
+        closeButton.addEventListener('click',()=>{
+          modalContainer.remove();
+        });
+
+          
+      })
     });
   }
 
@@ -48,9 +78,10 @@ getRandomPeople(userURL)
 
 
 
-gallery.addEventListener('click', (event) =>{
-    if (event.target.className != "gallery"){
-        // const person = bag.find(p=>p.name===)
-        console.log(event.target.querySelector);
-    }
-});
+// gallery.addEventListener('click', (event) =>{
+//     event.preventDefault();
+//     if (event.target.className != "gallery"){
+//         // const person = bag.find(p=>p.name===)
+//         console.log(event.target.classList);
+//     }
+// });
