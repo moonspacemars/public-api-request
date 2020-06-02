@@ -1,37 +1,44 @@
 const userURL = "https://randomuser.me/api/";
-const gallery =document.querySelector("#gallery");
-const body = document.querySelector("body"); 
+const gallery = document.querySelector("#gallery");
+const body = document.querySelector("body");
 
 
-async function getJSON(url){
-    try{
-      const response = await fetch(url);
-      return await response.json();
-    }catch (error){
-      throw error;
-    }
+/**
+ * Handle fetch request
+ * @param {string} url - The url of random user API  
+ */
+async function getJSON(url) {
+  try {
+    const response = await fetch(url);
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
 }
 
-// console.log(getJSON(userURL));
-const bag=[];
-async function getRandomPeople(url){
-    
-    for(let i=0; i<12; i++){
-        const item = await getJSON(url);
-        bag.push(item.results[0]);
-    }
-    return Promise.all(bag);
+/**
+ * Get 12 random people from random user API
+ * @param {string} url - The url of random user API 
+ */
+async function getRandomPeople(url) {
+  const bag = [];
+  for (let i = 0; i < 12; i++) {
+    const item = await getJSON(url);
+    bag.push(item.results[0]);
+  }
+  return Promise.all(bag);
 }
 
-
+/**
+ * Create html for user card and modal
+ * @param {array} data - Array of user object 
+ */
 function generateHTML(data) {
-    data.map( person => {
-      const div= document.createElement('div');
-      div.className="card";
-      gallery.appendChild(div);
- 
-
-      div.innerHTML = `
+  data.map(person => {
+    const div = document.createElement('div');
+    div.className = "card";
+    gallery.appendChild(div);
+    div.innerHTML = `
         <div class="card-img-container">
             <img class="card-img" src=${person.picture.large} alt="profile picture">
         </div>
@@ -41,12 +48,15 @@ function generateHTML(data) {
             <p class="card-text cap">${person.location.city}, ${person.location.state}</p>
         </div>        
       `;
-      div.addEventListener('click', (event) =>{
 
-        const modalContainer=document.createElement('div');
-        body.appendChild(modalContainer);
-        modalContainer.className="modal-container";
-        modalContainer.innerHTML=`
+    /**
+     * Event listener for creating modal
+     */
+    div.addEventListener('click', (event) => {
+      const modalContainer = document.createElement('div');
+      body.appendChild(modalContainer);
+      modalContainer.className = "modal-container";
+      modalContainer.innerHTML = `
                 <div class="modal">
                     <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                     <div class="modal-info-container">
@@ -57,31 +67,24 @@ function generateHTML(data) {
                         <hr>
                         <p class="modal-text">${person.cell}</p>
                         <p class="modal-text">${person.location.street.number} ${person.location.street.name}, ${person.location.state}, ${person.location.country} ${person.location.postcode}</p>
-                        <p class="modal-text">Birthday: ${person.dob.date}</p>
+                        <p class="modal-text">Birthday: ${person.dob.date.substring(0, 10)}</p>
                     </div>
                 </div>
                 `;
-        const closeButton =document.querySelector("#modal-close-btn");
-        closeButton.addEventListener('click',()=>{
-          modalContainer.remove();
-        });
-
-          
-      })
-    });
-  }
+      const closeButton = document.querySelector("#modal-close-btn");
+      /**
+       * Event listner for closing modal
+       */
+      closeButton.addEventListener('click', () => {
+        modalContainer.remove();
+      });
 
 
-// console.log(getRandomPeople(userURL));
+    })
+  });
+}
+
 getRandomPeople(userURL)
-  .then(generateHTML);
+  .then(generateHTML)
+  .catch(e => console.error(e));
 
-
-
-// gallery.addEventListener('click', (event) =>{
-//     event.preventDefault();
-//     if (event.target.className != "gallery"){
-//         // const person = bag.find(p=>p.name===)
-//         console.log(event.target.classList);
-//     }
-// });
