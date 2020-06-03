@@ -1,4 +1,4 @@
-const userURL = "https://randomuser.me/api/";
+const userURL = "https://randomuser.me/api/?results=12";
 const gallery = document.querySelector("#gallery");
 const body = document.querySelector("body");
 
@@ -21,12 +21,8 @@ async function getJSON(url) {
  * @param {string} url - The url of random user API 
  */
 async function getRandomPeople(url) {
-  const bag = [];
-  for (let i = 0; i < 12; i++) {
-    const item = await getJSON(url);
-    bag.push(item.results[0]);
-  }
-  return Promise.all(bag);
+  const users = await getJSON(url);
+  return Promise.all(users.results);
 }
 
 /**
